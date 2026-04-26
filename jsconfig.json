@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/utils/*": ["./src/backend/utils/*"],
+      "@/lib/*": ["./src/backend/lib/*"],
+      "@/services/*": ["./src/backend/services/*"],
+      "@/components/*": ["./src/frontend/components/*"],
+      "@/context/*": ["./src/frontend/context/*"],
+      "@/assets/*": ["./src/frontend/assets/*"],
+      "@frontend/*": ["./src/frontend/*"],
+      "@backend/*": ["./src/backend/*"],
+      "@/*": ["./src/*"]
+    }
+  },
+  "exclude": ["node_modules"]
+}

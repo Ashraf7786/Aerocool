@@ -2,6 +2,7 @@ import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
 import { UIProvider } from "@/context/UIContext";
+import { Analytics } from "@vercel/analytics/react";
 
 const inter = Inter({ subsets: ["latin"] });
 const plusJakarta = Plus_Jakarta_Sans({ 
@@ -21,6 +22,7 @@ export default function RootLayout({ children }) {
         <AuthProvider>
           <UIProvider>
             {children}
+            <Analytics />
           </UIProvider>
         </AuthProvider>
       </body>

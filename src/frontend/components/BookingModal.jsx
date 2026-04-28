@@ -47,7 +47,7 @@ export default function BookingModal({ isOpen, onClose }) {
         background: 'rgba(10, 15, 40, 0.6)',
         backdropFilter: 'blur(8px)',
         WebkitBackdropFilter: 'blur(8px)',
-        zIndex: 9000,
+        zIndex: 20000,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',

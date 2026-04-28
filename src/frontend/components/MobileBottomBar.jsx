@@ -9,7 +9,7 @@ export default function MobileBottomBar({ onOpenChat, onOpenBooking }) {
   const callUrl = `tel:+91${phoneNumber}`;
 
   return (
-    <div className="md:hidden fixed bottom-4 left-0 right-0 z-[10001] px-4">
+    <div className="md:hidden fixed bottom-4 left-0 right-0 z-[15000] px-4">
       <motion.div 
         initial={{ y: 100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
@@ -20,9 +20,9 @@ export default function MobileBottomBar({ onOpenChat, onOpenBooking }) {
         <div className="absolute -inset-[2px] bg-gradient-to-r from-blue-600 via-lime-400 to-blue-500 rounded-[28px] blur-[3px] opacity-20"></div>
         
         {/* Main Bar Container */}
-        <div className="relative flex items-end justify-between bg-[#121212]/90 backdrop-blur-2xl border border-white/10 rounded-[26px] px-2 py-2 shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
+        <div className="relative flex items-end justify-between bg-[#121212]/95 backdrop-blur-2xl border border-white/10 rounded-[26px] px-2 py-2 shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
           
-          {/* Call - Animated Ring */}
+          {/* Call */}
           <a 
             href={callUrl}
             className="flex flex-col items-center justify-center flex-1 h-14 rounded-2xl text-white hover:bg-white/5 transition-colors group"
@@ -31,10 +31,10 @@ export default function MobileBottomBar({ onOpenChat, onOpenBooking }) {
               <Phone size={18} className="animate-ring text-white/90" />
               <div className="absolute -inset-2 bg-blue-500/20 rounded-full blur-md animate-pulse"></div>
             </div>
-            <span className="text-[9px] font-bold uppercase tracking-widest text-white/50">Call</span>
+            <span className="text-[9px] font-bold uppercase tracking-widest text-white/60">Call</span>
           </a>
 
-          {/* WhatsApp - Production Real Icon */}
+          {/* WhatsApp */}
           <a 
             href={whatsappUrl}
             target="_blank"
@@ -58,9 +58,9 @@ export default function MobileBottomBar({ onOpenChat, onOpenBooking }) {
           <div className="relative px-2">
             <button 
               onClick={onOpenBooking}
-              className="flex flex-col items-center justify-center w-[72px] h-[72px] -mt-10 bg-blue-600 text-white rounded-[24px] shadow-[0_10px_30px_rgba(37,78,219,0.4)] border-[3px] border-[#121212] transition-all hover:scale-105 active:scale-95"
+              className="flex flex-col items-center justify-center w-[74px] h-[74px] -mt-10 bg-blue-600 text-white rounded-[24px] shadow-[0_15px_35px_rgba(37,78,219,0.5)] border-[3px] border-[#121212] transition-all hover:scale-105 active:scale-95"
             >
-              <div className="absolute top-1 right-1 p-1 bg-lime-400 rounded-bl-lg text-black z-10">
+              <div className="absolute -top-1 -right-1 p-1.5 bg-lime-400 rounded-full text-black z-10 shadow-lg border-2 border-[#121212]">
                 <Snowflake size={10} className="animate-spin-slow" />
               </div>
               <Calendar size={22} className="mb-1" />
@@ -68,7 +68,7 @@ export default function MobileBottomBar({ onOpenChat, onOpenBooking }) {
             </button>
           </div>
 
-          {/* Chat - Production Accent */}
+          {/* Chat */}
           <button 
             onClick={onOpenChat}
             className="flex flex-col items-center justify-center flex-1 h-14 rounded-2xl text-lime-400 hover:bg-white/5 transition-colors"
@@ -76,16 +76,19 @@ export default function MobileBottomBar({ onOpenChat, onOpenBooking }) {
             <div className="mb-1">
               <MessageCircle size={18} />
             </div>
-            <span className="text-[9px] font-bold uppercase tracking-widest text-lime-400/70">Chat</span>
+            <span className="text-[9px] font-bold uppercase tracking-widest text-lime-400/80">Chat</span>
           </button>
 
-          {/* Logo / Aero */}
-          <div className="flex flex-col items-center justify-center flex-1 h-14 rounded-2xl opacity-40">
-            <div className="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center mb-1 border border-white/5">
-               <span className="text-[9px] font-black text-white/90">AC</span>
+          {/* Home / Scroll Top */}
+          <button 
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            className="flex flex-col items-center justify-center flex-1 h-14 rounded-2xl hover:bg-white/5 transition-colors"
+          >
+            <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center mb-1 border border-white/10 group-hover:bg-white/20 transition-all">
+               <span className="text-[10px] font-black text-white/90">A</span>
             </div>
-            <span className="text-[8px] font-bold uppercase tracking-widest text-white">Aero</span>
-          </div>
+            <span className="text-[9px] font-bold uppercase tracking-widest text-white/60">Home</span>
+          </button>
 
         </div>
       </motion.div>

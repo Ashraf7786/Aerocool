@@ -249,7 +249,7 @@ export default function ChatAssistant({ isOpen, onToggle, onOpenBooking }) {
               borderRadius: '32px',
               display: 'flex',
               flexDirection: 'column',
-              zIndex: 10001,
+              zIndex: 20000,
               boxShadow: '0 20px 50px rgba(0,0,0,0.2)',
               border: '1px solid rgba(255,255,255,0.8)',
               overflow: 'hidden'

@@ -18,13 +18,6 @@ export default function UnifiedLogin() {
     setLoading(true);
     setError('');
 
-    // Master Admin Logic
-    if (loginMode === 'admin' && email === 'admin@aerocool.com' && password === 'admin123') {
-      document.cookie = "admin_token=master_admin_access; path=/; max-age=86400";
-      router.push('/admin/dashboard');
-      return;
-    }
-
     try {
       const supabase = createClient();
       

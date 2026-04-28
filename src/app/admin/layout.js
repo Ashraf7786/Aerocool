@@ -45,20 +45,6 @@ export default function AdminLayout({ children }) {
     const checkAuth = async () => {
       setLoadingProfile(true);
       
-      // 1. Check Master Admin Cookie
-      const isMasterAdmin = document.cookie.includes('admin_token=master_admin_access');
-      
-      if (isMasterAdmin) {
-        setUserProfile({
-          full_name: 'Ashraf Siddiqui',
-          role: 'admin',
-          status: 'approved'
-        });
-        setIsLoggedIn(true);
-        setLoadingProfile(false);
-        return;
-      }
-
       // 2. Check Supabase Auth
       try {
         const { createClient } = await import('@/utils/supabase/client');

@@ -1,10 +1,22 @@
 import { NextResponse } from 'next/server';
 import { sendAdminEmail } from '@/lib/mail';
 import { supabaseAdmin } from '@/lib/supabase';
+import { z } from 'zod';
+
+const inquirySchema = z.object({
+  name: z.string().min(1).max(100).regex(/^[\p{L}\s'-]+$/u, "Invalid name format"),
+  phone: z.string().min(10).max(15).regex(/^[0-9+-\s]+$/, "Invalid phone format").optional().or(z.literal('')),
+  email: z.string().email().max(255),
+  message: z.string().min(10).max(2000),
+});
 
 export async function POST(request) {
   try {
-    const data = await request.json();
+    const body = await request.json();
+    
+    // Validate Input
+    const data = inquirySchema.parse(body);
+
     console.log('Inquiry POST received:', data);
     
     // 1. Save to Supabase (using Admin client to bypass RLS)
@@ -13,7 +25,7 @@ export async function POST(request) {
       .insert([
         {
           name: data.name,
-          phone: data.phone, // Added phone field
+          phone: data.phone || null, // Added phone field
           email: data.email,
           message: data.message,
           status: 'New'
@@ -46,6 +58,10 @@ export async function POST(request) {
     }, { status: 200 });
 
   } catch (error) {
+    if (error instanceof z.ZodError) {
+      console.error('Validation Error:', error.errors);
+      return NextResponse.json({ error: 'Invalid input', details: error.errors }, { status: 400 });
+    }
     console.error('Inquiry API Error:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }

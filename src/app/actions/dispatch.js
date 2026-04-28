@@ -1,8 +1,12 @@
 'use server';
 
 import { supabaseAdmin } from '@/lib/supabase-admin';
+import { verifyAdmin } from '@/backend/lib/auth-check';
 
 export async function assignTechnician(bookingId, technicianId, requestId) {
+  const { error: authError } = await verifyAdmin();
+  if (authError) return { success: false, error: 'Unauthorized: Admins only' };
+
   try {
     // 1. Update Booking
     const { error: bookingError } = await supabaseAdmin

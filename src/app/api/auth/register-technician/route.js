@@ -1,10 +1,30 @@
 import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import { sendAdminEmail, sendEmail } from '@/lib/mail';
+import { z } from 'zod';
+
+const registerSchema = z.object({
+  name: z.string().min(2).max(50).regex(/^[a-zA-Z\s]*$/, "Name can only contain letters"),
+  email: z.string().email(),
+  password: z.string().min(6),
+  phone: z.string().regex(/^[0-9]{10}$/, "Phone must be 10 digits"),
+  experience: z.string().optional()
+});
 
 export async function POST(request) {
   try {
-    const { name, email, password, phone, experience } = await request.json();
+    const body = await request.json();
+    
+    // Validate Input
+    const validatedData = registerSchema.safeParse(body);
+    if (!validatedData.success) {
+      return NextResponse.json({ 
+        error: 'Validation failed', 
+        details: validatedData.error.flatten().fieldErrors 
+      }, { status: 400 });
+    }
+
+    const { name, email, password, phone } = validatedData.data;
 
     const normalizedEmail = email.toLowerCase().trim();
 

@@ -1,7 +1,11 @@
 import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase-admin';
+import { verifyAdmin } from '@/lib/auth-check';
 
 export async function POST(request) {
+  const { error: authError } = await verifyAdmin();
+  if (authError) return authError;
+
   try {
     const { name, email, password, phone } = await request.json();
 

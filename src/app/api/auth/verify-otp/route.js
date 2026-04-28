@@ -12,6 +12,9 @@ export async function POST(request) {
     const normalizedEmail = email.toLowerCase().trim();
     console.log('Verifying OTP for:', normalizedEmail);
 
+    // Basic brute-force protection: small delay
+    await new Promise(resolve => setTimeout(resolve, 500));
+
     // 1. Fetch profile with this email and OTP
     const { data: profile, error: fetchError } = await supabase
       .from('profiles')
@@ -21,18 +24,21 @@ export async function POST(request) {
 
     if (fetchError || !profile) {
       console.error('Fetch profile error:', fetchError);
-      return NextResponse.json({ error: 'User profile not found. Please register again.' }, { status: 404 });
+      return NextResponse.json({ error: 'Invalid verification code or email' }, { status: 401 });
     }
 
     // 2. Compare OTP
-    if (profile.otp_code !== otp) {
-      return NextResponse.json({ error: 'Invalid verification code' }, { status: 401 });
+    if (!profile.otp_code || profile.otp_code !== otp) {
+      return NextResponse.json({ error: 'Invalid verification code or email' }, { status: 401 });
     }
 
-    // 3. Clear OTP and mark as verified (optional: set a verified flag)
+    // 3. Clear OTP and mark as verified
     const { error: updateError } = await supabase
       .from('profiles')
-      .update({ otp_code: null })
+      .update({ 
+        otp_code: null,
+        is_verified: true 
+      })
       .eq('id', profile.id);
 
     if (updateError) throw updateError;
@@ -44,6 +50,6 @@ export async function POST(request) {
 
   } catch (error) {
     console.error('OTP Verification Error:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: 'Verification failed' }, { status: 500 });
   }
 }

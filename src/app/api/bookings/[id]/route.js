@@ -1,9 +1,13 @@
 import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
+import { verifyAdmin } from '@/lib/auth-check';
 
 export async function GET(request, { params }) {
+  const { error: authError } = await verifyAdmin();
+  if (authError) return authError;
+
   try {
-    const { id } = params;
+    const { id } = await params;
     
     if (!id) {
       return NextResponse.json({ error: 'Missing Booking ID' }, { status: 400 });

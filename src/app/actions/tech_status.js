@@ -1,8 +1,12 @@
 'use server';
 
 import { supabaseAdmin } from '@/lib/supabase-admin';
+import { verifyAnyAuth } from '@/backend/lib/auth-check';
 
 export async function updateTechStatus(bookingId, status) {
+  const { error: authError } = await verifyAnyAuth();
+  if (authError) return { success: false, error: 'Unauthorized access' };
+
   try {
     const updates = { tech_status: status };
     

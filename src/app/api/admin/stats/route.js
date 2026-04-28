@@ -1,6 +1,10 @@
 import { NextResponse } from 'next/server';
+import { verifyAdmin } from '@/lib/auth-check';
 
 export async function GET() {
+  const { error: authError } = await verifyAdmin();
+  if (authError) return authError;
+
   // Mock data for Admin dashboard stats
   const stats = {
     totalBookings: 154,

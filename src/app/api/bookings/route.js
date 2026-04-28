@@ -1,40 +1,53 @@
 import { NextResponse } from 'next/server';
 import { sendAdminEmail } from '@/lib/mail';
 import { supabase } from '@/lib/supabase';
+import { verifyAdmin } from '@/lib/auth-check';
+import { z } from 'zod';
+
+const bookingSchema = z.object({
+  name: z.string().min(1).max(100),
+  phone: z.string().min(10).max(15),
+  alternate_phone: z.string().max(15).optional().or(z.literal('')),
+  email: z.string().email().optional().or(z.literal('')),
+  address: z.string().min(1).max(500),
+  landmark: z.string().max(200).optional().or(z.literal('')),
+  city: z.string().max(100).default('Jaipur'),
+  pincode: z.string().regex(/^\d{6}$/, 'Invalid pincode').optional().or(z.literal('')),
+  google_location: z.string().url().optional().or(z.literal('')),
+  ac_type: z.string().min(1),
+  units: z.number().int().positive().default(1),
+  brand: z.string().max(100).optional().or(z.literal('')),
+  ac_age: z.string().optional().or(z.literal('')),
+  service_types: z.array(z.string()).min(1),
+  problem_description: z.string().max(2000).optional().or(z.literal('')),
+  preferred_date: z.string(),
+  time_slot: z.string(),
+  is_urgent: z.boolean().default(false),
+  parking_available: z.string().optional().or(z.literal('')),
+  floor_number: z.string().optional().or(z.literal('')),
+  lift_available: z.string().optional().or(z.literal('')),
+  communication_preference: z.string().optional().or(z.literal('')),
+  agreed_to_terms: z.boolean()
+});
 
 export async function POST(request) {
   try {
-    const data = await request.json();
-    console.log('New Booking received:', data);
+    const body = await request.json();
+    const result = bookingSchema.safeParse(body);
+    
+    if (!result.success) {
+      return NextResponse.json({ error: 'Validation failed', details: result.error.flatten().fieldErrors }, { status: 400 });
+    }
+    
+    const data = result.data;
+    console.log('New Booking received:', data.name);
     
     // 1. Save to Supabase
     const { data: dbData, error: dbError } = await supabase
       .from('bookings')
       .insert([
         {
-          name: data.name,
-          phone: data.phone,
-          alternate_phone: data.alternate_phone,
-          email: data.email,
-          address: data.address,
-          landmark: data.landmark,
-          city: data.city || 'Jaipur',
-          pincode: data.pincode,
-          google_location: data.google_location,
-          ac_type: data.ac_type,
-          units: data.units,
-          brand: data.brand,
-          ac_age: data.ac_age,
-          service_types: data.service_types,
-          problem_description: data.problem_description,
-          preferred_date: data.preferred_date,
-          time_slot: data.time_slot,
-          is_urgent: data.is_urgent,
-          parking_available: data.parking_available,
-          floor_number: data.floor_number,
-          lift_available: data.lift_available,
-          communication_preference: data.communication_preference,
-          agreed_to_terms: data.agreed_to_terms,
+          ...data,
           status: 'Pending'
         }
       ])
@@ -42,7 +55,7 @@ export async function POST(request) {
 
     if (dbError) {
       console.error('Supabase DB Error:', dbError);
-      // We continue to send email even if DB fails, or we can choose to stop.
+      return NextResponse.json({ error: 'Database error' }, { status: 500 });
     }
 
     // 2. Send email to admin
@@ -250,6 +263,9 @@ export async function POST(request) {
 }
 
 export async function GET() {
+  const { error: authError } = await verifyAdmin();
+  if (authError) return authError;
+
   try {
     const { data, error } = await supabase
       .from('bookings')
@@ -259,11 +275,14 @@ export async function GET() {
     if (error) throw error;
     return NextResponse.json(data);
   } catch (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
 
 export async function PATCH(request) {
+  const { error: authError } = await verifyAdmin();
+  if (authError) return authError;
+
   try {
     const { id, status } = await request.json();
     
@@ -281,7 +300,7 @@ export async function PATCH(request) {
 
     return NextResponse.json({ success: true, data: data?.[0] });
   } catch (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
 

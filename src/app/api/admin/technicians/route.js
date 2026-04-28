@@ -1,7 +1,11 @@
 import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase-admin';
+import { verifyAdmin } from '@/lib/auth-check';
 
 export async function GET() {
+  const { error: authError } = await verifyAdmin();
+  if (authError) return authError;
+
   try {
     const { data, error } = await supabaseAdmin
       .from('profiles')
@@ -17,6 +21,9 @@ export async function GET() {
 }
 
 export async function PATCH(request) {
+  const { error: authError } = await verifyAdmin();
+  if (authError) return authError;
+
   try {
     const body = await request.json();
     const { id } = body;
@@ -25,7 +32,6 @@ export async function PATCH(request) {
       return NextResponse.json({ error: 'Missing ID' }, { status: 400 });
     }
 
-    // Prepare update object based on what was sent
     const updates = {};
     if (body.status) updates.status = body.status;
     if (body.is_verified !== undefined) updates.is_verified = body.is_verified;

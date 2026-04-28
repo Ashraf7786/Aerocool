@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { sendAdminEmail } from '@/lib/mail';
 import { supabaseAdmin } from '@/lib/supabase';
+import { verifyAdmin } from '@/lib/auth-check';
 import { z } from 'zod';
 
 const inquirySchema = z.object({
@@ -68,8 +69,10 @@ export async function POST(request) {
 }
 
 export async function GET() {
+  const { error: authError } = await verifyAdmin();
+  if (authError) return authError;
+
   try {
-    // Use Admin client to ensure we see all inquiries even if RLS is enabled
     const { data, error } = await supabaseAdmin
       .from('contact_inquiries')
       .select('*')
@@ -82,6 +85,6 @@ export async function GET() {
     
     return NextResponse.json(data);
   } catch (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

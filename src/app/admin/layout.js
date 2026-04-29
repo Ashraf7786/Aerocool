@@ -43,20 +43,28 @@ export default function AdminLayout({ children }) {
   // Auth & Role Protection
   useEffect(() => {
     const checkAuth = async () => {
+      // Don't check auth if we're on the login page
+      if (pathname === '/admin/login') {
+        setLoadingProfile(false);
+        return;
+      }
+
       setLoadingProfile(true);
       
       try {
         const res = await fetch('/api/auth/me');
         if (!res.ok) {
-          if (pathname !== '/admin/login') router.push('/admin/login');
-          setLoadingProfile(false);
+          router.push('/admin/login');
           return;
         }
 
-        const { profile } = await res.json();
+        const { user, profile } = await res.json();
 
-        if (!profile || (profile.role !== 'admin' && profile.role !== 'owner')) {
-          // If not an admin/owner, send to tech hub if they are a tech, else home
+        // Safety: If it's the owner's email, allow them through even if profile is missing
+        const isOwnerEmail = user?.email === 'iamashraf96100@gmail.com';
+        const hasAdminRole = profile?.role === 'admin' || profile?.role === 'owner';
+
+        if (!isOwnerEmail && !hasAdminRole) {
           if (profile?.role === 'technician') {
             router.push('/technician/dashboard');
           } else {
@@ -65,11 +73,11 @@ export default function AdminLayout({ children }) {
           return;
         }
 
-        setUserProfile(profile);
+        setUserProfile(profile || { full_name: 'Administrator', role: 'owner' });
         setIsLoggedIn(true);
       } catch (err) {
         console.error("Auth Error:", err);
-        if (pathname !== '/admin/login') router.push('/admin/login');
+        router.push('/admin/login');
       } finally {
         setLoadingProfile(false);
       }

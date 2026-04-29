@@ -41,68 +41,27 @@ export async function middleware(request: NextRequest) {
     response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, x-client-info');
   }
 
-  // --- UNIFIED AUTH LOGIC ---
-  const isAdminPath = url.pathname.startsWith('/admin');
-  const isTechPath = url.pathname.startsWith('/technician');
-  const isLoginPath = url.pathname === '/admin/login';
-  const isTechRegisterPath = url.pathname === '/technician/register';
+  const { data: { user } } = await supabase.auth.getUser()
+  const url = request.nextUrl.clone()
 
   // 1. If user is NOT logged in
   if (!user) {
-    // Protect all Admin and Tech routes (except registration)
-    if ((isAdminPath || isTechPath) && !isLoginPath && !isTechRegisterPath) {
+    const isProtected = url.pathname.startsWith('/admin') || url.pathname.startsWith('/technician');
+    const isAuthPage = url.pathname === '/admin/login' || url.pathname === '/technician/register';
+    
+    if (isProtected && !isAuthPage) {
       url.pathname = '/admin/login';
       return NextResponse.redirect(url);
     }
     return response;
   }
 
-  // 2. If user IS logged in, fetch their role securely
-  let role = null;
-  try {
-    if (supabaseAdmin) {
-      const { data: profile, error } = await supabaseAdmin
-        .from('profiles')
-        .select('role')
-        .eq('id', user.id)
-        .maybeSingle();
-      
-      if (!error && profile) {
-        role = profile.role;
-      }
-    }
-  } catch (err) {
-    console.error('Middleware Auth Error:', err);
-  }
-
-  // 3. Logic for Login Page (Redirect logged-in users to their respective hubs)
-  if (isLoginPath) {
-    if (role === 'admin' || role === 'owner') {
-      url.pathname = '/admin/dashboard';
-      return NextResponse.redirect(url);
-    }
-    if (role === 'technician') {
-      url.pathname = '/technician/dashboard';
-      return NextResponse.redirect(url);
-    }
-    url.pathname = '/';
-    return NextResponse.redirect(url);
-  }
-
-  // 4. Protect Admin Routes
-  if (isAdminPath && !isLoginPath) {
-    if (role !== 'admin' && role !== 'owner') {
-      url.pathname = '/'; // Redirect unauthorized users to home
-      return NextResponse.redirect(url);
-    }
-  }
-
-  // 5. Protect Technician Routes
-  if (isTechPath && !isTechRegisterPath) {
-    if (role !== 'technician') {
-      url.pathname = '/'; // Redirect unauthorized users to home
-      return NextResponse.redirect(url);
-    }
+  // 2. Simple Role Protection (Layouts will handle the strict database check)
+  // This prevents the middleware from crashing if the database connection is slow
+  if (url.pathname === '/admin/login') {
+     // If logged in, send them to a landing page where the layout will sort them out
+     url.pathname = '/admin/dashboard';
+     return NextResponse.redirect(url);
   }
 
   return response;

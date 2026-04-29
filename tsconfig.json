@@ -13,10 +13,10 @@
     "incremental": true,
     "module": "esnext",
     "esModuleInterop": true,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "plugins": [
       {
         "name": "next"
@@ -25,22 +25,41 @@
     "strictNullChecks": true,
     "baseUrl": ".",
     "paths": {
-      "@/utils/*": ["./src/backend/utils/*"],
-      "@/lib/*": ["./src/backend/lib/*"],
-      "@/services/*": ["./src/backend/services/*"],
-      "@/components/*": ["./src/frontend/components/*"],
-      "@/context/*": ["./src/frontend/context/*"],
-      "@/assets/*": ["./src/frontend/assets/*"],
-      "@frontend/*": ["./src/frontend/*"],
-      "@backend/*": ["./src/backend/*"],
-      "@/*": ["./src/*"]
+      "@/utils/*": [
+        "./src/backend/utils/*"
+      ],
+      "@/lib/*": [
+        "./src/backend/lib/*"
+      ],
+      "@/services/*": [
+        "./src/backend/services/*"
+      ],
+      "@/components/*": [
+        "./src/frontend/components/*"
+      ],
+      "@/context/*": [
+        "./src/frontend/context/*"
+      ],
+      "@/assets/*": [
+        "./src/frontend/assets/*"
+      ],
+      "@frontend/*": [
+        "./src/frontend/*"
+      ],
+      "@backend/*": [
+        "./src/backend/*"
+      ],
+      "@/*": [
+        "./src/*"
+      ]
     }
   },
   "include": [
     "next-env.d.ts",
     ".next/types/**/*.ts",
     "**/*.ts",
-    "**/*.tsx"
+    "**/*.tsx",
+    ".next/dev/types/**/*.ts"
   ],
   "exclude": [
     "node_modules"

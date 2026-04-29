@@ -28,11 +28,9 @@ export default function UnifiedLogin() {
 
       if (authError) throw authError;
 
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('status, role')
-        .eq('id', data.user.id)
-        .maybeSingle();
+      // Fetch profile using our new secure route to bypass RLS redirection issues
+      const profileRes = await fetch('/api/auth/me');
+      const { profile } = await profileRes.json();
 
       if (profile && profile.role === 'technician' && profile.status !== 'approved') {
         throw new Error('Your technician account is pending admin approval.');
@@ -41,10 +39,7 @@ export default function UnifiedLogin() {
       // Strict Redirection based on actual role
       if (profile?.role === 'technician') {
         router.push('/technician/dashboard');
-      } else if (profile?.role === 'admin' || profile?.role === 'owner') {
-        router.push('/admin/dashboard');
       } else {
-        // Fallback for new accounts or undefined roles
         router.push('/admin/dashboard');
       }
     } catch (err) {

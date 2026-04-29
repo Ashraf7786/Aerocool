@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import Skeleton from './ui/Skeleton';
 
 const TESTIMONIALS = [
   {
@@ -25,8 +26,14 @@ const TESTIMONIALS = [
 export default function Testimonials() {
   const sectionRef = useRef();
   const [active, setActive] = useState(0);
+  const [loading, setLoading] = useState(true);
   const trackRef = useRef();
   const autoRef = useRef();
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 1800);
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     autoRef.current = setInterval(() => setActive((p) => (p + 1) % TESTIMONIALS.length), 5000);
@@ -69,40 +76,56 @@ export default function Testimonials() {
 
         {/* Slider */}
         <div style={{ overflow: 'hidden', borderRadius: 24 }}>
-          <div ref={trackRef} style={{ display: 'flex', willChange: 'transform' }}>
-            {TESTIMONIALS.map((t) => (
-              <div key={t.id} id={`testimonial-${t.id}`} style={{ flex: '0 0 100%', padding: '0 4px' }}>
-                <div className="testimonial-card">
-                  {/* Quote mark */}
-                  <div style={{ fontSize: '3rem', color: 'var(--blue)', lineHeight: 1, marginBottom: 8, opacity: 0.2, fontFamily: 'Georgia,serif' }}>"</div>
-                  <div className="stars">{'★'.repeat(t.rating)}</div>
+          {loading ? (
+            <div className="testimonial-card">
+              <Skeleton circle width={50} height={50} style={{ marginBottom: 20 }} />
+              <Skeleton className="skeleton-text" style={{ width: '100%' }} />
+              <Skeleton className="skeleton-text" style={{ width: '80%' }} />
+              <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginTop: 24 }}>
+                <Skeleton circle width={52} height={52} />
+                <div style={{ flex: 1 }}>
+                  <Skeleton width={120} height={16} style={{ marginBottom: 6 }} />
+                  <Skeleton width={80} height={12} />
+                </div>
+                <Skeleton width={100} height={28} borderRadius={50} />
+              </div>
+            </div>
+          ) : (
+            <div ref={trackRef} style={{ display: 'flex', willChange: 'transform' }}>
+              {TESTIMONIALS.map((t) => (
+                <div key={t.id} id={`testimonial-${t.id}`} style={{ flex: '0 0 100%', padding: '0 4px' }}>
+                  <div className="testimonial-card">
+                    {/* Quote mark */}
+                    <div style={{ fontSize: '3rem', color: 'var(--blue)', lineHeight: 1, marginBottom: 8, opacity: 0.2, fontFamily: 'Georgia,serif' }}>"</div>
+                    <div className="stars">{'★'.repeat(t.rating)}</div>
 
-                  <p style={{
-                    fontSize: '1.05rem', lineHeight: 1.8, color: 'var(--black)',
-                    margin: '18px 0 28px', fontStyle: 'italic',
-                  }}>
-                    "{t.text}"
-                  </p>
-
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-                    <div className="avatar">{t.initials}</div>
-                    <div>
-                      <div style={{ fontWeight: 700, color: 'var(--black)' }}>{t.name}</div>
-                      <div style={{ fontSize: '0.82rem', color: 'var(--grey)' }}>{t.role}</div>
-                    </div>
-                    <div style={{
-                      marginLeft: 'auto', fontSize: '0.73rem', fontWeight: 700,
-                      padding: '5px 14px', borderRadius: 50,
-                      background: 'var(--blue-light)', color: 'var(--blue)',
-                      border: '1px solid rgba(37,78,219,0.15)',
+                    <p style={{
+                      fontSize: '1.05rem', lineHeight: 1.8, color: 'var(--black)',
+                      margin: '18px 0 28px', fontStyle: 'italic',
                     }}>
-                      {t.service}
+                      "{t.text}"
+                    </p>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                      <div className="avatar">{t.initials}</div>
+                      <div>
+                        <div style={{ fontWeight: 700, color: 'var(--black)' }}>{t.name}</div>
+                        <div style={{ fontSize: '0.82rem', color: 'var(--grey)' }}>{t.role}</div>
+                      </div>
+                      <div style={{
+                        marginLeft: 'auto', fontSize: '0.73rem', fontWeight: 700,
+                        padding: '5px 14px', borderRadius: 50,
+                        background: 'var(--blue-light)', color: 'var(--blue)',
+                        border: '1px solid rgba(37,78,219,0.15)',
+                      }}>
+                        {t.service}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Dots + arrows */}

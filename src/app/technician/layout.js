@@ -14,38 +14,28 @@ export default function TechnicianLayout({ children }) {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const supabase = createClient();
-        const { data: { user } } = await supabase.auth.getUser();
-        
-        if (!user) {
+        const res = await fetch('/api/auth/me');
+        if (!res.ok) {
           router.push('/admin/login');
           return;
         }
 
-        const { data: prof } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', user.id)
-          .maybeSingle();
+        const { profile: prof } = await res.json();
 
         if (prof) {
-          if (prof.role !== 'technician') {
-            router.push('/admin/dashboard'); // Send admins away
-            return;
+          if (prof.role !== 'technician' && prof.role !== 'admin' && prof.role !== 'owner') {
+             router.push('/');
+             return;
           }
+          // Note: If they are admin, we let them view tech hub for testing, 
+          // but usually you'd redirect. Here we just set the profile.
           setProfile(prof);
         } else {
-          // Fallback if no profile row yet
-          setProfile({
-            id: user.id,
-            email: user.email,
-            full_name: user.email.split('@')[0],
-            role: 'technician',
-            is_available: true
-          });
+          router.push('/admin/login');
         }
       } catch (err) {
         console.error(err);
+        router.push('/admin/login');
       } finally {
         setLoading(false);
       }

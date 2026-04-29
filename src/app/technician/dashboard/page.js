@@ -33,12 +33,10 @@ export default function TechnicianMyWork() {
         
         if (!user) return;
 
-        // Get technician profile ID
-        const { data: prof } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', user.id)
-          .maybeSingle();
+        // Get technician profile using our secure route
+        const profileRes = await fetch('/api/auth/me');
+        if (!profileRes.ok) return;
+        const { profile: prof } = await profileRes.json();
 
         // Check if forced edit is needed (from URL or missing data)
         const urlParams = new URLSearchParams(window.location.search);

@@ -45,27 +45,23 @@ export default function AdminLayout({ children }) {
     const checkAuth = async () => {
       setLoadingProfile(true);
       
-      // 2. Check Supabase Auth
       try {
-        const { createClient } = await import('@/utils/supabase/client');
-        const supabase = createClient();
-        const { data: { user } } = await supabase.auth.getUser();
-        
-        if (!user) {
+        const res = await fetch('/api/auth/me');
+        if (!res.ok) {
           if (pathname !== '/admin/login') router.push('/admin/login');
           setLoadingProfile(false);
           return;
         }
 
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', user.id)
-          .maybeSingle();
+        const { profile } = await res.json();
 
-        if (!profile || profile.role === 'technician') {
-          // If a technician tries to access /admin, redirect them to their hub
-          router.push('/technician/dashboard');
+        if (!profile || (profile.role !== 'admin' && profile.role !== 'owner')) {
+          // If not an admin/owner, send to tech hub if they are a tech, else home
+          if (profile?.role === 'technician') {
+            router.push('/technician/dashboard');
+          } else {
+            router.push('/');
+          }
           return;
         }
 

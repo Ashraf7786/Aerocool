@@ -4,7 +4,8 @@ import { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Wind, Settings, Zap, CheckCircle2, Sparkles } from 'lucide-react';
-import React from 'react';
+import React, { useState } from 'react';
+import Skeleton from './ui/Skeleton';
 
 const SERVICES = [
   {
@@ -67,7 +68,14 @@ const SERVICES = [
 export default function Services({ servicesFromAPI }) {
   const sectionRef = useRef();
   const cardsRef = useRef([]);
+  const [loading, setLoading] = useState(true);
   const displayServices = servicesFromAPI?.length ? servicesFromAPI : SERVICES;
+
+  useEffect(() => {
+    // Simulate loading for better UX demonstration
+    const timer = setTimeout(() => setLoading(false), 1500);
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     // Only register and animate on client
@@ -127,101 +135,116 @@ export default function Services({ servicesFromAPI }) {
 
 
         <div className="grid-3">
-          {displayServices.map((svc, i) => (
-            <div
-              key={svc.id || i}
-              id={`service-card-${svc.id || i}`}
-              ref={(el) => (cardsRef.current[i] = el)}
-              className="service-card"
-              style={{ 
-                position: 'relative', 
-                opacity: 1, 
-                background: '#fff', 
-                borderRadius: 24, 
-                padding: '32px',
-                border: '1px solid rgba(0,0,0,0.05)',
-                transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                boxShadow: '0 10px 30px rgba(0,0,0,0.02)'
-              }}
-              onMouseEnter={e => {
-                e.currentTarget.style.transform = 'translateY(-10px)';
-                e.currentTarget.style.boxShadow = '0 20px 40px rgba(0,0,0,0.06)';
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 10px 30px rgba(0,0,0,0.02)';
-              }}
-            >
-              {/* Badge */}
-              {svc.badge && (
-                <div style={{
-                  position: 'absolute', top: 20, right: 20,
-                  background: svc.accent === '#EEFF41' ? 'var(--lime)' : 'var(--blue)',
-                  color: svc.accent === '#EEFF41' ? 'var(--black)' : '#fff',
-                  fontSize: '0.65rem', fontWeight: 800,
-                  padding: '5px 14px', borderRadius: 50,
-                  letterSpacing: '0.08em', textTransform: 'uppercase',
-                  boxShadow: `0 8px 20px ${svc.accent}40`,
-                  zIndex: 2
-                }}>
-                  {svc.badge}
-                </div>
-              )}
-
-              <div className="service-icon" style={{ 
-                width: 60, height: 60, borderRadius: 18, 
-                background: `${svc.accent}10`, 
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                color: svc.accent,
-                marginBottom: 24,
-                position: 'relative',
-                boxShadow: `0 10px 25px ${svc.accent}20`,
-                border: `1px solid ${svc.accent}30`
-              }}>
-                <div style={{ position: 'absolute', inset: 0, borderRadius: 18, background: `radial-gradient(circle at center, ${svc.accent}20, transparent)` }} />
-                <div style={{ position: 'relative', zIndex: 1 }}>
-                  {svc.icon ? React.cloneElement(svc.icon, { size: 28 }) : <Wind size={28} />}
+          {loading ? (
+            [1, 2, 3, 4, 5, 6].map((i) => (
+              <div key={i} className="service-card" style={{ background: '#fff', borderRadius: 24, padding: '32px' }}>
+                <Skeleton circle width={60} height={60} style={{ marginBottom: 24 }} />
+                <Skeleton className="skeleton-title" style={{ width: '80%' }} />
+                <Skeleton className="skeleton-text" />
+                <Skeleton className="skeleton-text" style={{ width: '90%' }} />
+                <div style={{ display: 'flex', gap: 8, marginTop: 20 }}>
+                  <Skeleton width={80} height={24} borderRadius={50} />
+                  <Skeleton width={80} height={24} borderRadius={50} />
                 </div>
               </div>
-
-              <h3 style={{
-                fontFamily: "var(--font-plus-jakarta), sans-serif",
-                fontSize: '1.25rem', fontWeight: 800, marginBottom: 12, color: 'var(--black)',
-                letterSpacing: '-0.02em'
-              }}>
-                {svc.title}
-              </h3>
-
-              <p style={{ color: 'var(--grey)', fontSize: '0.9rem', lineHeight: 1.72, marginBottom: 22 }}>
-                {svc.desc || svc.description}
-              </p>
-
-              {/* Feature chips */}
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 24 }}>
-                {(svc.features || []).map((f) => (
-                  <span key={f} style={{
-                    fontSize: '0.73rem', fontWeight: 600, padding: '4px 12px',
-                    borderRadius: 50, background: 'var(--blue-light)',
-                    border: '1px solid rgba(37,78,219,0.15)', color: 'var(--blue)',
-                  }}>
-                    ✓ {f}
-                  </span>
-                ))}
-              </div>
-
-              <a href="#home" onClick={(e) => { e.preventDefault(); document.getElementById('home')?.scrollIntoView({ behavior: 'smooth' }); }}
-                style={{
-                  display: 'inline-flex', alignItems: 'center', gap: 6,
-                  fontSize: '0.88rem', fontWeight: 700, color: 'var(--blue)',
-                  textDecoration: 'none', transition: 'gap 0.2s',
+            ))
+          ) : (
+            displayServices.map((svc, i) => (
+              <div
+                key={svc.id || i}
+                id={`service-card-${svc.id || i}`}
+                ref={(el) => (cardsRef.current[i] = el)}
+                className="service-card"
+                style={{ 
+                  position: 'relative', 
+                  opacity: 1, 
+                  background: '#fff', 
+                  borderRadius: 24, 
+                  padding: '32px',
+                  border: '1px solid rgba(0,0,0,0.05)',
+                  transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                  boxShadow: '0 10px 30px rgba(0,0,0,0.02)'
                 }}
-                onMouseEnter={e => e.currentTarget.style.gap = '10px'}
-                onMouseLeave={e => e.currentTarget.style.gap = '6px'}
+                onMouseEnter={e => {
+                  e.currentTarget.style.transform = 'translateY(-10px)';
+                  e.currentTarget.style.boxShadow = '0 20px 40px rgba(0,0,0,0.06)';
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 10px 30px rgba(0,0,0,0.02)';
+                }}
               >
-                Book this service <span>→</span>
-              </a>
-            </div>
-          ))}
+                {/* Badge */}
+                {svc.badge && (
+                  <div style={{
+                    position: 'absolute', top: 20, right: 20,
+                    background: svc.accent === '#EEFF41' ? 'var(--lime)' : 'var(--blue)',
+                    color: svc.accent === '#EEFF41' ? 'var(--black)' : '#fff',
+                    fontSize: '0.65rem', fontWeight: 800,
+                    padding: '5px 14px', borderRadius: 50,
+                    letterSpacing: '0.08em', textTransform: 'uppercase',
+                    boxShadow: `0 8px 20px ${svc.accent}40`,
+                    zIndex: 2
+                  }}>
+                    {svc.badge}
+                  </div>
+                )}
+
+                <div className="service-icon" style={{ 
+                  width: 60, height: 60, borderRadius: 18, 
+                  background: `${svc.accent}10`, 
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  color: svc.accent,
+                  marginBottom: 24,
+                  position: 'relative',
+                  boxShadow: `0 10px 25px ${svc.accent}20`,
+                  border: `1px solid ${svc.accent}30`
+                }}>
+                  <div style={{ position: 'absolute', inset: 0, borderRadius: 18, background: `radial-gradient(circle at center, ${svc.accent}20, transparent)` }} />
+                  <div style={{ position: 'relative', zIndex: 1 }}>
+                    {svc.icon ? React.cloneElement(svc.icon, { size: 28 }) : <Wind size={28} />}
+                  </div>
+                </div>
+
+                <h3 style={{
+                  fontFamily: "var(--font-plus-jakarta), sans-serif",
+                  fontSize: '1.25rem', fontWeight: 800, marginBottom: 12, color: 'var(--black)',
+                  letterSpacing: '-0.02em'
+                }}>
+                  {svc.title}
+                </h3>
+
+                <p style={{ color: 'var(--grey)', fontSize: '0.9rem', lineHeight: 1.72, marginBottom: 22 }}>
+                  {svc.desc || svc.description}
+                </p>
+
+                {/* Feature chips */}
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 24 }}>
+                  {(svc.features || []).map((f) => (
+                    <span key={f} style={{
+                      fontSize: '0.73rem', fontWeight: 600, padding: '4px 12px',
+                      borderRadius: 50, background: 'var(--blue-light)',
+                      border: '1px solid rgba(37,78,219,0.15)', color: 'var(--blue)',
+                    }}>
+                      ✓ {f}
+                    </span>
+                  ))}
+                </div>
+
+                <a href="#home" onClick={(e) => { e.preventDefault(); document.getElementById('home')?.scrollIntoView({ behavior: 'smooth' }); }}
+                  style={{
+                    display: 'inline-flex', alignItems: 'center', gap: 6,
+                    fontSize: '0.88rem', fontWeight: 700, color: 'var(--blue)',
+                    textDecoration: 'none', transition: 'gap 0.2s',
+                  }}
+                  onMouseEnter={e => e.currentTarget.style.gap = '10px'}
+                  onMouseLeave={e => e.currentTarget.style.gap = '6px'}
+                >
+                  Book this service <span>→</span>
+                </a>
+              </div>
+            ))
+          )}
         </div>
       </div>
     </section>

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { TrendingUp, Users, Calendar, Activity, ArrowUpRight, ArrowDownRight, Clock, Loader2 } from 'lucide-react';
+import Skeleton from '@/components/ui/Skeleton';
 
 export default function Dashboard() {
   const [stats, setStats] = useState([]);
@@ -47,8 +48,54 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}>
-        <Loader2 size={40} className="animate-spin" color="var(--blue)" />
+      <div style={{ padding: '0 0' }}>
+        <div style={{ marginBottom: 32 }}>
+          <Skeleton className="skeleton-title" style={{ height: '2.5rem', width: '300px' }} />
+          <Skeleton className="skeleton-text" style={{ width: '450px' }} />
+        </div>
+
+        {/* Stats Grid Skeleton */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 24, marginBottom: 40 }}>
+          {[1, 2, 3, 4].map(i => (
+            <div key={i} style={{ background: '#fff', padding: 24, borderRadius: 24, border: '1px solid #f1f5f9' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 20 }}>
+                <Skeleton circle width={48} height={48} />
+                <Skeleton width={60} height={24} borderRadius={50} />
+              </div>
+              <Skeleton width={100} height={14} style={{ marginBottom: 8 }} />
+              <Skeleton width={140} height={32} />
+            </div>
+          ))}
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 24 }}>
+          <div style={{ background: '#fff', borderRadius: 24, padding: 24, border: '1px solid #f1f5f9' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 24 }}>
+              <Skeleton width={200} height={24} />
+              <Skeleton width={80} height={18} />
+            </div>
+            {[1, 2, 3, 4, 5].map(i => (
+              <div key={i} style={{ display: 'flex', gap: 16, padding: '16px 0', borderBottom: '1px solid #f8fafc' }}>
+                <Skeleton width="40%" height={20} />
+                <Skeleton width="20%" height={20} />
+                <Skeleton width="20%" height={20} />
+                <Skeleton width="20%" height={20} />
+              </div>
+            ))}
+          </div>
+          <div style={{ background: '#fff', borderRadius: 24, padding: 24, border: '1px solid #f1f5f9' }}>
+            <Skeleton width={150} height={24} style={{ marginBottom: 24 }} />
+            {[1, 2, 3, 4].map(i => (
+              <div key={i} style={{ display: 'flex', gap: 14, marginBottom: 20 }}>
+                <Skeleton circle width={32} height={32} />
+                <div style={{ flex: 1 }}>
+                  <Skeleton width="80%" height={14} style={{ marginBottom: 6 }} />
+                  <Skeleton width="40%" height={10} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     );
   }

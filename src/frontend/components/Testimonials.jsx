@@ -1,162 +1,101 @@
 "use client";
+import React from "react";
+import { TestimonialsColumn } from "./ui/testimonials-columns";
+import { motion } from "framer-motion";
 
-import { useEffect, useRef, useState } from 'react';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import Skeleton from './ui/Skeleton';
-
-const TESTIMONIALS = [
+const testimonials = [
   {
-    id: 1, name: 'Sarah Johnson', role: 'Homeowner', rating: 5, initials: 'SJ',
-    text: 'Absolutely incredible service! The technician arrived on time, was very professional, and left our AC running like new. The air quality in our home has noticeably improved.',
-    service: 'Split AC Cleaning',
+    text: "The best AC service in Jaipur. Rajesh and his team were very professional and fixed my split AC cooling issue in 30 minutes.",
+    name: "Rajesh Kumar",
+    role: "Home Owner, Mansarovar",
+    rating: 5,
   },
   {
-    id: 2, name: 'Michael Chen', role: 'Office Manager', rating: 5, initials: 'MC',
-    text: 'High-quality service at a very competitive price. The team cleaned all 6 units in our office efficiently and professionally. Highly recommend to any business owner!',
-    service: 'Gas Check & Maintenance',
+    text: "Very reliable technician. They explained the problem clearly and didn't overcharge. Highly recommended for regular maintenance.",
+    name: "Priya Sharma",
+    role: "Apartment Resident, Raja Park",
+    rating: 5,
   },
   {
-    id: 3, name: 'Emma Rodriguez', role: 'Property Manager', rating: 5, initials: 'ER',
-    text: 'The entire process was hassle-free from booking to completion. Amazing attention to detail and wonderful customer service. Will definitely be using Aerocool for all our properties.',
-    service: 'Window AC Cleaning',
+    text: "Excellent response time. I called them at 9 PM and they had a technician at my house by 10 AM the next day. Brilliant service!",
+    name: "Amit Patel",
+    role: "Shop Owner, Johri Bazar",
+    rating: 4,
+  },
+  {
+    text: "Their AMC plan is very affordable. Now I don't have to worry about my office ACs breaking down in the summer heat.",
+    name: "Sneha Reddy",
+    role: "Office Manager, C-Scheme",
+    rating: 5,
+  },
+  {
+    text: "Honest and hard-working staff. They cleaned up everything after the installation. 5 stars for the cleanliness!",
+    name: "Vikram Singh",
+    role: "Business Man, Vaishali Nagar",
+    rating: 5,
+  },
+  {
+    text: "Saved me from the 45-degree heat! The technician was very knowledgeable and polite. Will definitely use Aerocool again.",
+    name: "Ananya Gupta",
+    role: "IT Professional, Malviya Nagar",
+    rating: 5,
+  },
+  {
+    text: "Professional installation of our VRV system. The team was well-equipped and finished the job ahead of schedule.",
+    name: "Farhan Akhtar",
+    role: "Hotel Manager, Bani Park",
+    rating: 5,
+  },
+  {
+    text: "I appreciated the transparency in pricing. No hidden costs, and they used genuine spare parts for my LG unit.",
+    name: "Kavita Iyer",
+    role: "Professor, JLN Marg",
+    rating: 4,
+  },
+  {
+    text: "They are the experts for high-end AC brands. They handled my Daikin unit with extreme care. Very satisfied.",
+    name: "Sameer Khan",
+    role: "Doctor, Tonk Road",
+    rating: 5,
   },
 ];
 
+const firstColumn = testimonials.slice(0, 3);
+const secondColumn = testimonials.slice(3, 6);
+const thirdColumn = testimonials.slice(6, 9);
+
 export default function Testimonials() {
-  const sectionRef = useRef();
-  const [active, setActive] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const trackRef = useRef();
-  const autoRef = useRef();
-
-  useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 1800);
-    return () => clearTimeout(timer);
-  }, []);
-
-  useEffect(() => {
-    autoRef.current = setInterval(() => setActive((p) => (p + 1) % TESTIMONIALS.length), 5000);
-    return () => clearInterval(autoRef.current);
-  }, []);
-
-  useEffect(() => {
-    if (trackRef.current) {
-      gsap.to(trackRef.current, { x: `-${active * 100}%`, duration: 0.6, ease: 'power3.inOut' });
-    }
-  }, [active]);
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      gsap.registerPlugin(ScrollTrigger);
-      
-      const ctx = gsap.context(() => {
-        gsap.fromTo(sectionRef.current,
-          { opacity: 0, y: 40 },
-          { opacity: 1, y: 0, duration: 0.8, scrollTrigger: { trigger: sectionRef.current, start: 'top 85%' } }
-        );
-      });
-      return () => ctx.revert();
-    }
-  }, []);
-
   return (
-    <section ref={sectionRef} className="section-padding" id="testimonials"
-      style={{ background: 'var(--grey-light)', opacity: 1 }}
-    >
-      <div className="section-container">
-        <div style={{ textAlign: 'center', marginBottom: 56 }}>
-          <div className="section-label">⭐ Reviews</div>
-          <h2 className="section-title">What Our Clients Say</h2>
-          <div className="divider" style={{ margin: '12px auto 16px' }} />
-          <p className="section-subtitle" style={{ margin: '0 auto' }}>
-            Hear from satisfied customers who trust us for fast, reliable, and professional AC care.
+    <section className="bg-black py-24 relative overflow-hidden" id="testimonials">
+      {/* Background Glows */}
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-[120px] -z-10" />
+      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-600/10 rounded-full blur-[120px] -z-10" />
+
+      <div className="container mx-auto px-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+          viewport={{ once: true }}
+          className="flex flex-col items-center justify-center max-w-[640px] mx-auto text-center mb-16"
+        >
+          <div className="inline-flex items-center gap-2 border border-blue-500/30 bg-blue-500/5 px-4 py-1.5 rounded-full mb-6">
+            <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+            <span className="text-xs font-bold text-blue-400 uppercase tracking-widest">Testimonials</span>
+          </div>
+
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tighter text-white mb-6">
+            Trusted by <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">Thousands</span> in Jaipur
+          </h2>
+          <p className="text-lg text-white/60 leading-relaxed">
+            See why homeowners and businesses across the Pink City trust Aerocool for their comfort.
           </p>
-        </div>
+        </motion.div>
 
-        {/* Slider */}
-        <div style={{ overflow: 'hidden', borderRadius: 24 }}>
-          {loading ? (
-            <div className="testimonial-card">
-              <Skeleton circle width={50} height={50} style={{ marginBottom: 20 }} />
-              <Skeleton className="skeleton-text" style={{ width: '100%' }} />
-              <Skeleton className="skeleton-text" style={{ width: '80%' }} />
-              <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginTop: 24 }}>
-                <Skeleton circle width={52} height={52} />
-                <div style={{ flex: 1 }}>
-                  <Skeleton width={120} height={16} style={{ marginBottom: 6 }} />
-                  <Skeleton width={80} height={12} />
-                </div>
-                <Skeleton width={100} height={28} borderRadius={50} />
-              </div>
-            </div>
-          ) : (
-            <div ref={trackRef} style={{ display: 'flex', willChange: 'transform' }}>
-              {TESTIMONIALS.map((t) => (
-                <div key={t.id} id={`testimonial-${t.id}`} style={{ flex: '0 0 100%', padding: '0 4px' }}>
-                  <div className="testimonial-card">
-                    {/* Quote mark */}
-                    <div style={{ fontSize: '3rem', color: 'var(--blue)', lineHeight: 1, marginBottom: 8, opacity: 0.2, fontFamily: 'Georgia,serif' }}>"</div>
-                    <div className="stars">{'★'.repeat(t.rating)}</div>
-
-                    <p style={{
-                      fontSize: '1.05rem', lineHeight: 1.8, color: 'var(--black)',
-                      margin: '18px 0 28px', fontStyle: 'italic',
-                    }}>
-                      "{t.text}"
-                    </p>
-
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-                      <div className="avatar">{t.initials}</div>
-                      <div>
-                        <div style={{ fontWeight: 700, color: 'var(--black)' }}>{t.name}</div>
-                        <div style={{ fontSize: '0.82rem', color: 'var(--grey)' }}>{t.role}</div>
-                      </div>
-                      <div style={{
-                        marginLeft: 'auto', fontSize: '0.73rem', fontWeight: 700,
-                        padding: '5px 14px', borderRadius: 50,
-                        background: 'var(--blue-light)', color: 'var(--blue)',
-                        border: '1px solid rgba(37,78,219,0.15)',
-                      }}>
-                        {t.service}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Dots + arrows */}
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 12, marginTop: 28 }}>
-          <button id="testimonial-prev" onClick={() => { clearInterval(autoRef.current); setActive((p) => (p - 1 + TESTIMONIALS.length) % TESTIMONIALS.length); }}
-            style={{
-              width: 40, height: 40, borderRadius: '50%', background: 'var(--white)',
-              border: '1.5px solid var(--border)', cursor: 'pointer', fontSize: '1rem',
-              color: 'var(--black)', transition: 'all 0.2s',
-            }}
-            onMouseEnter={e => { e.currentTarget.style.background = 'var(--blue)'; e.currentTarget.style.color = '#fff'; e.currentTarget.style.borderColor = 'var(--blue)'; }}
-            onMouseLeave={e => { e.currentTarget.style.background = 'var(--white)'; e.currentTarget.style.color = 'var(--black)'; e.currentTarget.style.borderColor = 'var(--border)'; }}
-          >←</button>
-
-          {TESTIMONIALS.map((_, i) => (
-            <button key={i} id={`testimonial-dot-${i}`}
-              className={`slider-dot ${active === i ? 'active' : ''}`}
-              onClick={() => { clearInterval(autoRef.current); setActive(i); }}
-              aria-label={`Testimonial ${i + 1}`}
-            />
-          ))}
-
-          <button id="testimonial-next" onClick={() => { clearInterval(autoRef.current); setActive((p) => (p + 1) % TESTIMONIALS.length); }}
-            style={{
-              width: 40, height: 40, borderRadius: '50%', background: 'var(--white)',
-              border: '1.5px solid var(--border)', cursor: 'pointer', fontSize: '1rem',
-              color: 'var(--black)', transition: 'all 0.2s',
-            }}
-            onMouseEnter={e => { e.currentTarget.style.background = 'var(--blue)'; e.currentTarget.style.color = '#fff'; e.currentTarget.style.borderColor = 'var(--blue)'; }}
-            onMouseLeave={e => { e.currentTarget.style.background = 'var(--white)'; e.currentTarget.style.color = 'var(--black)'; e.currentTarget.style.borderColor = 'var(--border)'; }}
-          >→</button>
+        <div className="flex justify-center gap-8 mt-10 [mask-image:linear-gradient(to_bottom,transparent,black_15%,black_85%,transparent)] max-h-[680px] overflow-hidden">
+          <TestimonialsColumn testimonials={firstColumn} duration={25} />
+          <TestimonialsColumn testimonials={secondColumn} className="hidden md:block" duration={35} />
+          <TestimonialsColumn testimonials={thirdColumn} className="hidden lg:block" duration={30} />
         </div>
       </div>
     </section>

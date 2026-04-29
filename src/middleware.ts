@@ -41,9 +41,6 @@ export async function middleware(request: NextRequest) {
     response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, x-client-info');
   }
 
-  const { data: { user } } = await supabase.auth.getUser()
-  const url = request.nextUrl.clone()
-
   // 1. If user is NOT logged in
   if (!user) {
     const isProtected = url.pathname.startsWith('/admin') || url.pathname.startsWith('/technician');

@@ -66,36 +66,36 @@ const thirdColumn = testimonials.slice(6, 9);
 
 export default function Testimonials() {
   return (
-    <section className="bg-black py-24 relative overflow-hidden" id="testimonials">
-      {/* Background Glows */}
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-[120px] -z-10" />
-      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-600/10 rounded-full blur-[120px] -z-10" />
+    <section className="bg-[#050505] py-32 relative overflow-hidden" id="testimonials">
+      {/* Refined Ambient Glows */}
+      <div className="absolute -top-[10%] -left-[10%] w-[50%] h-[50%] bg-cyan-500/5 rounded-full blur-[120px] -z-10" />
+      <div className="absolute -bottom-[10%] -right-[10%] w-[50%] h-[50%] bg-blue-500/5 rounded-full blur-[120px] -z-10" />
 
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
           viewport={{ once: true }}
-          className="flex flex-col items-center justify-center max-w-[640px] mx-auto text-center mb-16"
+          className="flex flex-col items-center justify-center max-w-[720px] mx-auto text-center mb-24"
         >
-          <div className="inline-flex items-center gap-2 border border-blue-500/30 bg-blue-500/5 px-4 py-1.5 rounded-full mb-6">
-            <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-            <span className="text-xs font-bold text-blue-400 uppercase tracking-widest">Testimonials</span>
+          <div className="inline-flex items-center gap-2.5 border border-white/5 bg-white/[0.02] px-5 py-2 rounded-full mb-8 backdrop-blur-sm">
+            <span className="w-1.5 h-1.5 rounded-full bg-cyan-500 shadow-[0_0_8px_rgba(6,182,212,0.5)]" />
+            <span className="text-[11px] font-bold text-zinc-400 uppercase tracking-[0.2em]">Client Success</span>
           </div>
 
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tighter text-white mb-6">
-            Trusted by <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">Thousands</span> in Jaipur
+          <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white mb-8">
+            Trusted by the <span className="text-transparent bg-clip-text bg-gradient-to-b from-white to-zinc-500">Industry Leaders</span>
           </h2>
-          <p className="text-lg text-white/60 leading-relaxed">
-            See why homeowners and businesses across the Pink City trust Aerocool for their comfort.
+          <p className="text-[17px] text-zinc-400/80 leading-relaxed font-light max-w-lg">
+            Experience the standard of excellence that has made Aerocool the preferred choice for Jaipur's elite properties.
           </p>
         </motion.div>
 
-        <div className="flex justify-center gap-8 mt-10 [mask-image:linear-gradient(to_bottom,transparent,black_15%,black_85%,transparent)] max-h-[680px] overflow-hidden">
-          <TestimonialsColumn testimonials={firstColumn} duration={25} />
-          <TestimonialsColumn testimonials={secondColumn} className="hidden md:block" duration={35} />
-          <TestimonialsColumn testimonials={thirdColumn} className="hidden lg:block" duration={30} />
+        <div className="flex justify-center gap-10 mt-10 [mask-image:linear-gradient(to_bottom,transparent,black_15%,black_85%,transparent)] max-h-[800px] overflow-hidden">
+          <TestimonialsColumn testimonials={firstColumn} duration={35} />
+          <TestimonialsColumn testimonials={secondColumn} className="hidden md:block" duration={45} />
+          <TestimonialsColumn testimonials={thirdColumn} className="hidden lg:block" duration={40} />
         </div>
       </div>
     </section>

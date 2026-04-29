@@ -3,6 +3,11 @@ import { createClient } from '@/utils/supabase/middleware'
 import { supabaseAdmin } from '@/backend/lib/supabase-admin'
 
 export async function middleware(request: NextRequest) {
+  // Safety check for environment variables in Edge Runtime
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    return NextResponse.next();
+  }
+
   const { supabase, response } = createClient(request)
 
   // Edge-compatible nonce generation (Buffer is not available in Edge)

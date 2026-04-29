@@ -58,13 +58,22 @@ export async function middleware(request: NextRequest) {
   }
 
   // 2. If user IS logged in, fetch their role securely
-  const { data: profile } = await supabaseAdmin
-    .from('profiles')
-    .select('role')
-    .eq('id', user.id)
-    .maybeSingle();
-
-  const role = profile?.role;
+  let role = null;
+  try {
+    if (supabaseAdmin) {
+      const { data: profile, error } = await supabaseAdmin
+        .from('profiles')
+        .select('role')
+        .eq('id', user.id)
+        .maybeSingle();
+      
+      if (!error && profile) {
+        role = profile.role;
+      }
+    }
+  } catch (err) {
+    console.error('Middleware Auth Error:', err);
+  }
 
   // 3. Logic for Login Page (Redirect logged-in users to their respective hubs)
   if (isLoginPath) {

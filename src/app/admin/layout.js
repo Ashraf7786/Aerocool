@@ -61,10 +61,12 @@ export default function AdminLayout({ children }) {
         const { user, profile } = await res.json();
 
         // Safety: If it's the owner's email, allow them through even if profile is missing
-        const isOwnerEmail = user?.email === 'iamashraf96100@gmail.com';
+        const owners = ['iamashraf96100@gmail.com', 'aero.cool.jaipur2023@gmail.com'];
+        const isOwnerEmail = owners.includes(user?.email);
         const hasAdminRole = profile?.role === 'admin' || profile?.role === 'owner';
 
         if (!isOwnerEmail && !hasAdminRole) {
+          console.warn("Unauthorized access attempt:", user?.email, profile?.role);
           if (profile?.role === 'technician') {
             router.push('/technician/dashboard');
           } else {
@@ -72,6 +74,7 @@ export default function AdminLayout({ children }) {
           }
           return;
         }
+
 
         setUserProfile(profile || { full_name: 'Administrator', role: 'owner' });
         setIsLoggedIn(true);

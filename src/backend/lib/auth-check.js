@@ -22,7 +22,7 @@ export async function verifyAdmin() {
       .from('profiles')
       .select('role')
       .eq('id', user.id)
-      .single();
+      .maybeSingle();
 
     if (!profile || (profile.role !== 'admin' && profile.role !== 'owner')) {
       return { user, profile, error: NextResponse.json({ error: 'Forbidden' }, { status: 403 }) };
@@ -53,7 +53,7 @@ export async function verifyTechnician() {
       .from('profiles')
       .select('role')
       .eq('id', user.id)
-      .single();
+      .maybeSingle();
 
     if (!profile || profile.role !== 'technician') {
       return { user, profile, error: NextResponse.json({ error: 'Forbidden' }, { status: 403 }) };
@@ -84,7 +84,7 @@ export async function verifyAnyAuth() {
       .from('profiles')
       .select('role')
       .eq('id', user.id)
-      .single();
+      .maybeSingle();
 
     if (!profile || !['admin', 'owner', 'technician'].includes(profile.role)) {
       return { user, profile, error: NextResponse.json({ error: 'Forbidden' }, { status: 403 }) };

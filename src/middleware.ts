@@ -13,7 +13,10 @@ export async function middleware(request: NextRequest) {
   }
 
   try {
-    const { supabase, response } = createClient(request);
+    const { supabase, result } = createClient(request);
+
+    // 1. Get User first to handle session refresh
+    const { data: { user } } = await supabase.auth.getUser();
 
     // Edge-compatible nonce generation
     const nonce = btoa(Array.from(crypto.getRandomValues(new Uint8Array(16)), b => String.fromCharCode(b)).join(''));
@@ -31,24 +34,22 @@ export async function middleware(request: NextRequest) {
       upgrade-insecure-requests;
     `.replace(/\s{2,}/g, ' ').trim();
 
-    // Apply CSP Headers
-    response.headers.set('x-nonce', nonce);
-    response.headers.set('Content-Security-Policy', cspHeader);
+    // Apply CSP Headers to the LATEST response object
+    result.response.headers.set('x-nonce', nonce);
+    result.response.headers.set('Content-Security-Policy', cspHeader);
 
     // Apply CORS for API routes
     if (url.pathname.startsWith('/api/')) {
       const origin = request.headers.get('origin');
       const host = request.headers.get('host');
       if (origin && !origin.includes(host)) {
-        // response.headers.set('Access-Control-Allow-Origin', 'https://yourdomain.com');
+        // result.response.headers.set('Access-Control-Allow-Origin', 'https://yourdomain.com');
       } else {
-        response.headers.set('Access-Control-Allow-Origin', origin || '*');
+        result.response.headers.set('Access-Control-Allow-Origin', origin || '*');
       }
-      response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-      response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, x-client-info');
+      result.response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+      result.response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, x-client-info');
     }
-
-    const { data: { user } } = await supabase.auth.getUser()
 
     // 2. If user is NOT logged in
     if (!user) {
@@ -59,7 +60,7 @@ export async function middleware(request: NextRequest) {
         url.pathname = '/admin/login';
         return NextResponse.redirect(url);
       }
-      return response;
+      return result.response;
     }
 
     // 3. Simple Role Protection
@@ -68,8 +69,9 @@ export async function middleware(request: NextRequest) {
        return NextResponse.redirect(url);
     }
 
-    return response;
+    return result.response;
   } catch (error) {
+
     console.error('Middleware Critical Error:', error);
     return NextResponse.next();
   }

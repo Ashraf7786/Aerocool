@@ -13,6 +13,9 @@ const plusJakarta = Plus_Jakarta_Sans({
 export const metadata = {
   title: "Best AC Service in Jaipur | Expert AC Repair & Installation",
   description: "Looking for the best AC service in Jaipur? Aerocool offers fast, affordable AC repair, installation, and gas filling in Vaishali Nagar, Mansarovar, Malviya Nagar & Jagatpura. Same-day service by certified technicians. Book now!",
+  icons: {
+    icon: '/favicon.svg',
+  },
 };
 
 export default function RootLayout({ children }) {
